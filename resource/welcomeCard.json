@@ -1,0 +1,111 @@
+{
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.0",
+  "body": [
+    {
+      "type": "Image",
+      "url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7EJgiydchpYSOyTbftrSWMm_C37-xR_d0uA&usqp=CAU",
+      "size": "stretch"
+    },
+    {
+      "type": "TextBlock",
+      "spacing": "medium",
+      "size": "default",
+      "weight": "bolder",
+      "text": "Welcome to Table Reservation Bot!",
+      "wrap": true,
+      "maxLines": 0
+    },
+    {
+      "type": "TextBlock",
+      "size": "default",
+      "isSubtle": true,
+      "text": "How can i help you!",
+      "wrap": true,
+      "maxLines": 0
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.ShowCard",
+      "title": "Book",
+      "card": {
+        "type": "AdaptiveCard",
+        "body": [
+                {
+                    "type": "ColumnSet",
+                    "columns": [
+                        {
+                            "type": "Column",
+                            "width": "stretch",
+                            "items": [
+                                {
+                                    "type": "Image",
+                                    "url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSC41cOW3uPnzNpCqG0JokoF-yHb3P52-cpQ&usqp=CAU",
+                                    "size": "Large"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "Column",
+                            "width": "stretch",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "\nBook your Table.",
+                                    "wrap": true,
+                                    "size": "Large",
+                                    "weight": "Bolder",
+                                    "isSubtle": true,
+                                    "color": "Dark",
+                                    "separator": true,
+                                    "horizontalAlignment": "Right"
+                                }
+                            ],
+                            "separator": true,
+                            "horizontalAlignment": "Center"
+                        }
+                    ]
+                },
+                {
+                    "type": "TextBlock",
+                    "text": "Enter Your Booking Details.",
+                    "wrap": true,
+                    "weight": "Bolder",
+                    "separator": true
+                },
+                {
+                    "type": "Input.Number",
+                    "placeholder": "Enter Number of Persons",
+                    "id": "numOfPerson"
+                },
+                {
+                    "type": "Input.Number",
+                    "placeholder": "Enter Number of Tables",
+                    "id": "numOfTable"
+                },
+                {
+                    "type": "TextBlock",
+                    "text": "Date of Booking:",
+                    "wrap": true,
+                    "id": "dateText",
+                    "weight": "Bolder",
+                    "separator": true
+                },
+                {
+                    "type": "Input.Date",
+                    "id": "bookingDate",
+                    "separator": true
+                }
+            ],
+        "actions": [
+          {
+            "type": "Action.Submit",
+            "title": "OK"
+          }
+        ]
+      }
+    }
+  ]
+}
