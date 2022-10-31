@@ -146,6 +146,85 @@ module.exports = {
                 }
             ]
         }
+    },
+    bookingForm: () => {
+        return CardFactory.adaptiveCard({
+            version: '1.0.0',
+            type: 'AdaptiveCard',
+            body: [
+                {
+                    "type": "ColumnSet",
+                    "columns": [
+                        {
+                            "type": "Column",
+                            "width": "stretch",
+                            "items": [
+                                {
+                                    "type": "Image",
+                                    "url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSC41cOW3uPnzNpCqG0JokoF-yHb3P52-cpQ&usqp=CAU",
+                                    "size": "Large"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "Column",
+                            "width": "stretch",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "\nBook your Table.",
+                                    "wrap": true,
+                                    "size": "Large",
+                                    "weight": "Bolder",
+                                    "isSubtle": true,
+                                    "color": "Dark",
+                                    "separator": true,
+                                    "horizontalAlignment": "Right"
+                                }
+                            ],
+                            "separator": true,
+                            "horizontalAlignment": "Center"
+                        }
+                    ]
+                },
+                {
+                    "type": "TextBlock",
+                    "text": "Enter Your Booking Details.",
+                    "wrap": true,
+                    "weight": "Bolder",
+                    "separator": true
+                },
+                {
+                    "type": "Input.Number",
+                    "placeholder": "Enter Number of Persons",
+                    "id": "numOfPerson"
+                },
+                {
+                    "type": "Input.Number",
+                    "placeholder": "Enter Number of Tables",
+                    "id": "numOfTable"
+                },
+                {
+                    "type": "TextBlock",
+                    "text": "Date of Booking:",
+                    "wrap": true,
+                    "id": "dateText",
+                    "weight": "Bolder",
+                    "separator": true
+                },
+                {
+                    "type": "Input.Date",
+                    "id": "bookingDate",
+                    "separator": true
+                }
+            ],
+            "actions": [
+                {
+                    "type": "Action.Submit",
+                    "title": "Submit"
+                }
+            ]
+        });
     }
 
 }

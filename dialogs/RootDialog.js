@@ -2,7 +2,7 @@ const { ComponentDialog, DialogSet, DialogTurnStatus,
     WaterfallDialog } = require('botbuilder-dialogs');
 const { HelpDialog, BookingDialog, GetBookingDialog, UpdateBookingDialog, CancelBookingDialog } = require('./dialogIndex');
 const { rootDialog, helpDialog, bookingDialog, getBookingDialog, updateBookingDialog, cancelBookingDialog } = require('../Constants/DialogIds');
-const { taskModule } = require("./taskModule");
+
 const parseMessage = 'parseMessage';
 class RootDialog extends ComponentDialog {
     constructor(conversationState) {
@@ -26,7 +26,6 @@ class RootDialog extends ComponentDialog {
 
     async run(context, accessor) {
         try {
-
             const dialogSet = new DialogSet(accessor);
             dialogSet.add(this);
             const dialogContext = await dialogSet.createContext(context);

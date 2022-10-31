@@ -106,6 +106,15 @@
           }
         ]
       }
+    },
+    {
+      "type":"Action.Submit",
+      "title":"Open a task Module.",
+      "data":{
+        "msteams":{"type":"task/fetch"},
+        "data":"openTask"
+      }
+
     }
   ]
 }
