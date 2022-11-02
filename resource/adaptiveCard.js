@@ -1,7 +1,4 @@
 const { CardFactory } = require('botbuilder');
-
-
-
 module.exports = {
     optionCard: () => {
         return {
@@ -225,6 +222,27 @@ module.exports = {
                 }
             ]
         });
-    }
+    },
+    confirmProactiveSent: () => {
+        return CardFactory.adaptiveCard({
+            version: '1.0.0',
+            type: 'AdaptiveCard',
+            body: [
+                {
+                    "type": "TextBlock",
+                    "text": "Proactive Message Sent to TableReservationChannel.",
+                    "size": "Medium",
+                    "weight": "Bolder",
+                    "wrap": true
+                }
+            ],
+            "actions": [
+                {
+                    "type": "Action.Submit",
+                    "title": "Okay"
+                }
+            ]
 
+        });
+    }
 }

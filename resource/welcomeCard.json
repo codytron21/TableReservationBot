@@ -114,7 +114,20 @@
         "msteams":{"type":"task/fetch"},
         "data":"openTask"
       }
-
+    },
+    {
+      "type":"Action.OpenUrl",
+      "title": "Proactive to chat",
+      "url":"http://localhost:3978/api/notify"
+    },
+    {
+      "type":"Action.Submit",
+      "title":"Send Proactive to Channel",
+      "data":{
+        "msteams":{"type":"task/fetch"},
+        "data":"incomingWebhook"
+      }
     }
+   
   ]
 }

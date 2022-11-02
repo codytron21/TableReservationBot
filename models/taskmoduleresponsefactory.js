@@ -4,7 +4,9 @@
 class TaskModuleResponseFactory {
     static createResponse(taskModuleInfoOrString) {
         if (typeof taskModuleInfoOrString === 'string') {
+            // console.log("======>tM", taskModuleInfoOrString);
             return {
+
                 task: {
                     type: 'message',
                     value: taskModuleInfoOrString
@@ -16,6 +18,7 @@ class TaskModuleResponseFactory {
             task: {
                 type: 'continue',
                 value: taskModuleInfoOrString
+
             }
         };
     }
