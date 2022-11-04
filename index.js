@@ -65,7 +65,6 @@ server.get('/api/notify', async (req, res) => {
         // console.log("======>", conversationReference);
         await adapter.continueConversationAsync(process.env.MicrosoftAppId, conversationReference, async (context) => {
             await context.sendActivity('Proactive Message: Thanks for visiting our webpage!');
-
         });
     }
 
@@ -74,6 +73,24 @@ server.get('/api/notify', async (req, res) => {
     res.write('<html><body><h1>Proactive messages have been sent.</h1></body></html>');
     res.end();
 });
+server.get('/*', restify.plugins.serveStatic({
+    directory: './pages'
+}));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // axios.post('https://celebaltech.webhook.office.com/webhookb2/7de50934-9edb-4ff9-a12b-e999fe9e2caf@e4e34038-ea1f-4882-b6e8-ccd776459ca0/IncomingWebhook/c5e9c96405a744bd94ba4ac7b9e1ca4e/b7b2b566-28e8-47b8-937a-37b46acf2a32',
 //     {

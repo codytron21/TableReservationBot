@@ -109,10 +109,18 @@
     },
     {
       "type":"Action.Submit",
-      "title":"Open a task Module.",
+      "title":"task Module adaptive",
       "data":{
         "msteams":{"type":"task/fetch"},
-        "data":"openTask"
+        "data":"openTaskAdaptive"
+      }
+    },
+    {
+      "type":"Action.Submit",
+      "title":"task module Webpage",
+      "data":{
+        "msteams":{"type":"task/fetch"},
+        "data":"openTaskWebPage"
       }
     },
     {

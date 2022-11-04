@@ -1,12 +1,13 @@
-const { ActivityHandler, MessageFactory, CardFactory, TeamsActivityHandler, TurnContext } = require('botbuilder');
+const { ActivityHandler, MessageFactory, CardFactory, TeamsActivityHandler, TurnContext, teamsNotifyUser } = require('botbuilder');
 const WelcomeCard = require('./resource/welcomeCard.json');
 const { optionCard, bookingForm, confirmProactiveSent } = require('./resource/adaptiveCard');
 const { TaskModuleResponseFactory } = require("./models/taskmoduleresponsefactory");
 const axios = require('axios');
+const { setTimeout } = require('timers/promises');
 class BotActivityHandler extends TeamsActivityHandler {
-
     constructor(conversationState, rootDialog, conversationReferences) {
         super();
+        this.baseUrl = process.env.BaseUrl;
         if (!conversationState) throw new Error('conversation state required!');
         this.conversationState = conversationState;
         this.rootDialog = rootDialog;
@@ -16,13 +17,47 @@ class BotActivityHandler extends TeamsActivityHandler {
             this.addConversationReference(context.activity);
             await this.rootDialog.run(context, this.accessor);
             if (context.activity.text == "hello" || context.activity.text == "hi") {
+                const conversationReference = TurnContext.getConversationReference(context.activity);
+                const userMsg = context.activity.text;
+                const ts = Date.now();
+                // await new Promise(resolve => setTimeout(async () => resolve(
+                //     await context.adapter.continueConversationAsync(process.env.MicrosoftAppId, conversationReference, async (context) => {
+                //         await context.sendActivity(`Proactive Message: ${((Date.now() - ts) / 1000)}sec`);
+                //         await context.sendActivity(`your name is ${conversationReference.user.name} 
+                //     You sent: ${userMsg}`)
+                //     })
+                // ), 2000));
+                const res = await setTimeout(1000, 'success');
+                await context.adapter.continueConversationAsync(process.env.MicrosoftAppId, conversationReference,
+                    async (context) => {
+                        let message = MessageFactory.text(`Proactive Message: your name is "${conversationReference.user.name}" You messaged: "${userMsg}"
+                             sent in: ${(Date.now() - ts) / 1000}sec`);
+                        teamsNotifyUser(message);
+                        await context.sendActivity(message);
+                    })
+            }
+            else {
+                this.addConversationReference(context.activity);
                 await context.sendActivity({
                     attachments: [CardFactory.adaptiveCard(WelcomeCard)]
                 }
                 );
                 await context.sendActivity(optionCard());
-                await next();
             }
+
+            // (async () => {
+            //     try {
+            //         const response = await setTimeoutPromise(2000);
+            //         await context.adapter.continueConversationAsync(process.env.MicrosoftAppId, conversationReference, async (context) => {
+            //             await context.sendActivity(`Proactive Message: ${((Date.now() - ts) / 1000)}sec`)
+            //             await context.sendActivity(`your name is ${conversationReference.user.name} You sent: ${userMsg}`)
+            //         });
+            //         console.log(response);
+            //     }
+            //     catch (err) {
+            //         console.log("Error:", err);
+            //     }
+            // })();
             await next();
         });
 
@@ -39,14 +74,43 @@ class BotActivityHandler extends TeamsActivityHandler {
         })
 
     }
+    async mentionActivityAsync(context) {
+        const mention = {
+            mentioned: context.activity.from,
+            text: `<at>${new TextEncoder().encode(
+                context.activity.from.name
+            )}</at>`,
+            type: 'mention'
+        };
+
+        const replyActivity = MessageFactory.text(`Hi ${mention.text}`);
+        replyActivity.entities = [mention];
+        await context.sendActivity(replyActivity);
+    }
+    setTimeoutPromise(delay) {
+        return new Promise((resolve, reject) => {
+            if (delay < 0) return reject("Delay must be greater than 0")
+
+            setTimeout(() => {
+                resolve("done");
+            }, delay)
+        })
+    }
     async handleTeamsTaskModuleFetch(context, taskModuleRequest) {
         var taskInfo = {};
-        if (taskModuleRequest.data.data == 'openTask') {
-
+        if (taskModuleRequest.data.data == 'openTaskAdaptive') {
             taskInfo.card = bookingForm();
-            // taskInfo.width = 600;
-            // taskInfo.height = 500;
-            // taskInfo.title = "This card is called using task module.";
+            taskInfo.width = 600;
+            taskInfo.height = 500;
+            taskInfo.title = "This card is called using task module.";
+            return TaskModuleResponseFactory.toTaskModuleResponse(taskInfo);
+
+        }
+        else if (taskModuleRequest.data.data == 'openTaskWebPage') {
+            taskInfo.url = taskInfo.fallbackUrl = this.baseUrl + '/index.html';
+            taskInfo.width = 600;
+            taskInfo.height = 500;
+            taskInfo.title = "This Custom HTML.";
             return TaskModuleResponseFactory.toTaskModuleResponse(taskInfo);
         }
         else {
