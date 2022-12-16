@@ -1,7 +1,7 @@
 const sdk = require('api')('@gupshup/v1.0#3gxw8k3vl6xmaps4');
 function sendText(recepientNumber, yourtext) {
     sdk.postMsg({
-            channel: "whatsapp",
+            channel: "whatsapp",   
             source: "917834811114",
             destination: `${recepientNumber}`,
             "src.name": process.env.GUPSHUP_APP_NAME,
