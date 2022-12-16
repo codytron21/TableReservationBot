@@ -3,14 +3,23 @@
 
 const { InputHints } = require('botbuilder');
 const { ComponentDialog, DialogTurnStatus } = require('botbuilder-dialogs');
-
+const { GetBookingDialog } = require('./getBookingDialog');
+// const { getBookingDialog, bookingDialog } = require('../Constants/DialogIds');
 /**
  * This base class watches for common phrases like "help" and "cancel" and takes action on them
  * BEFORE they reach the normal bot logic.
  */
-class CancelAndHelpDialog extends ComponentDialog {
+const { BookingDetails } = require('../models/dataSchema');
+class InterruptHandler extends ComponentDialog {
+
+    constructor(id, conversationState) {
+        super(id);
+        this.addDialog(new GetBookingDialog(conversationState));
+
+    }
     async onContinueDialog(innerDc) {
         const result = await this.interrupt(innerDc);
+
         if (result) {
             return result;
         }
@@ -19,13 +28,16 @@ class CancelAndHelpDialog extends ComponentDialog {
 
     async interrupt(innerDc) {
         if (innerDc.context.activity.text) {
+            // console.log("=====>interrupt", innerDc._info);
             const text = innerDc.context.activity.text.toLowerCase();
 
             switch (text) {
-                case 'help':
-                case '?': {
-                    const helpMessageText = 'Show help here';
+
+                case 'mybookings': {
+                    // await innerDc.beginDialog(getBookingDialog);
+                    const helpMessageText = 'Here are your bookings';
                     await innerDc.context.sendActivity(helpMessageText, helpMessageText, InputHints.ExpectingInput);
+                    await innerDc.beginDialog('getBookingDialog', BookingDetails.bookingDetails)
                     return { status: DialogTurnStatus.waiting };
                 }
                 case 'cancel':
@@ -39,4 +51,4 @@ class CancelAndHelpDialog extends ComponentDialog {
     }
 }
 
-module.exports.CancelAndHelpDialog = CancelAndHelpDialog;
+module.exports.InterruptHandler = InterruptHandler;

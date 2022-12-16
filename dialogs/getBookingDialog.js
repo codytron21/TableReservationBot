@@ -7,8 +7,8 @@ const { optionCard } = require('../resource/adaptiveCard');
 class GetBookingDialog extends ComponentDialog {
     constructor(conversationState) {
         super(getBookingDialog)
-        if (!conversationState) throw new Error('conversation state required!');
-        this.conversationState = conversationState;
+        // if (!conversationState) throw new Error('conversation state required!');
+        // this.conversationState = conversationState;
 
         this.addDialog(new WaterfallDialog(getBookingDialogWF1, [
             this.sendBookingDetails.bind(this),
@@ -20,6 +20,7 @@ class GetBookingDialog extends ComponentDialog {
     }
     async sendBookingDetails(stepContext) {
         const bookingDetails = stepContext.options;
+
         if (bookingDetails.length) {
             let Msg = "You have following Bookings: \n";
             bookingDetails.map(async (bookingDetail, key) => (

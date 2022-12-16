@@ -1,31 +1,34 @@
 const { TimexProperty } = require('@microsoft/recognizers-text-data-types-timex-expression');
 const { InputHints, MessageFactory, CardFactory } = require('botbuilder');
-const { ConfirmPrompt, TextPrompt, ComponentDialog, WaterfallDialog } = require('botbuilder-dialogs');
+const { ConfirmPrompt, DialogTurnStatus, TextPrompt, ComponentDialog, WaterfallDialog } = require('botbuilder-dialogs');
 const { DateResolverDialog } = require('./dateResolverDialog');
 const CONFIRM_PROMPT = 'confirmPrompt';
 const DATE_RESOLVER_DIALOG = 'dateResolverDialog';
 const TEXT_PROMPT = 'textPrompt';
 const WATERFALL_DIALOG = 'waterfallDialog';
 const { confirmReservation } = require('../resource/confirmationCard');
+const { BookingDetails } = require("../models/dataSchema");
 const { bookingDialog } = require('../Constants/DialogIds');
 const { optionCard } = require('../resource/adaptiveCard');
-class BookingDialog extends ComponentDialog {
+const { InterruptHandler } = require("./InterruptHandler");
+class BookingDialog extends InterruptHandler {
     constructor(conversationState) {
-        super(bookingDialog)
+        super(bookingDialog, conversationState);
         if (!conversationState) throw new Error('conversation state required!');
         this.conversationState = conversationState;
         this.bookingDetail = this.conversationState.createProperty('bookingDetail');
         this.addDialog(new TextPrompt(TEXT_PROMPT))
-            .addDialog(new ConfirmPrompt(CONFIRM_PROMPT))
-            .addDialog(new DateResolverDialog(DATE_RESOLVER_DIALOG))
-            .addDialog(new WaterfallDialog(WATERFALL_DIALOG, [
-                this.numberOfPersonStep.bind(this),
-                this.numberOfTableStep.bind(this),
-                this.bookingDateStep.bind(this),
-                this.confirmStep.bind(this),
-                this.finalStep.bind(this),
-                // this.summaryStep.bind(this)
-            ]));
+        this.addDialog(new ConfirmPrompt(CONFIRM_PROMPT))
+        this.addDialog(new DateResolverDialog(DATE_RESOLVER_DIALOG))
+        // this.addDialog(new GetBookingDialog(this.conversationState))
+        this.addDialog(new WaterfallDialog(WATERFALL_DIALOG, [
+            this.numberOfPersonStep.bind(this),
+            this.numberOfTableStep.bind(this),
+            this.bookingDateStep.bind(this),
+            this.confirmStep.bind(this),
+            this.finalStep.bind(this),
+            // this.summaryStep.bind(this)
+        ]));
 
         this.initialDialogId = WATERFALL_DIALOG;
     }
@@ -35,7 +38,6 @@ class BookingDialog extends ComponentDialog {
      */
     async numberOfPersonStep(stepContext) {
         // const bookingDetails = stepContext.options;
-
         if (!this.bookingDetail.numberOfPerson) {
             const messageText = 'For how many person you want to make reservation.';
             const msg = MessageFactory.text(messageText, messageText, InputHints.ExpectingInput);
@@ -46,6 +48,7 @@ class BookingDialog extends ComponentDialog {
     }
 
     async numberOfTableStep(stepContext) {
+
         this.bookingDetail.numberOfPerson = stepContext.result;
         if (!this.bookingDetail.numberOfTables) {
             const messageText = 'How many tables you want to book?';
@@ -94,6 +97,7 @@ class BookingDialog extends ComponentDialog {
             const dateOfBooking = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}  at ${date.toLocaleTimeString()}`;
             this.bookingDetail.dateOfBooking = dateOfBooking;
             const newBookings = stepContext.options;
+            BookingDetails.saveBooking(this.bookingDetail.numberOfPerson, this.bookingDetail.numberOfTable, this.bookingDetail.bookingDate, this.bookingDetail.dateOfBooking);
             newBookings.push(this.bookingDetail);
             this.bookingDetail = {};
             return await stepContext.endDialog(newBookings);

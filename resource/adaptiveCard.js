@@ -73,7 +73,10 @@ module.exports = {
                             "items": [
                                 {
                                     "type": "Image",
-                                    "url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSC41cOW3uPnzNpCqG0JokoF-yHb3P52-cpQ&usqp=CAU",
+                                     "url": 
+                                    `https://encryptedtbn0.gstatic.com/images? 
+                                       q=tbn:ANd9GcRSC41cOW3uPnzNpCqG0JokoF- 
+                                        yHb3P52-cpQ&usqp=CAU`,
                                     "size": "Large"
                                 }
                             ]
@@ -129,8 +132,8 @@ module.exports = {
                     "id": "bookingDate",
                     "separator": true
                 }
-            ],
-            "actions": [
+             ],
+             "actions": [
                 {
                     "type": "Action.Submit",
                     "title": "Book Table",
@@ -223,14 +226,14 @@ module.exports = {
             ]
         });
     },
-    confirmProactiveSent: () => {
+   confirmProactiveSent: (text) => {
         return CardFactory.adaptiveCard({
             version: '1.0.0',
             type: 'AdaptiveCard',
             body: [
                 {
                     "type": "TextBlock",
-                    "text": "Proactive Message Sent to TableReservationChannel.",
+                    "text": `${text}`,
                     "size": "Medium",
                     "weight": "Bolder",
                     "wrap": true
@@ -244,5 +247,81 @@ module.exports = {
             ]
 
         });
+    },
+    whatsappText : ()=>{
+        return CardFactory.adaptiveCard(
+            {
+            "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+            "type": "AdaptiveCard",
+            "version": "1.0",
+            "body": [
+                {
+                    "type": "Input.Text",
+                    "label": "Enter Recepient Number",
+                    "style": "text",
+                    "id": "recepientNumber",
+                    "isRequired": true,
+                    "errorMessage": "Number is required"
+                },
+                {
+                    "type": "Input.Text",
+                    "label": "Your Message",
+                    "style": "text",
+                    "isMultiline": true,
+                    "id": "Message"
+                }
+            ],
+            "actions": [
+                {
+                    "type": "Action.Submit",
+                    "title": "Send",
+                    "data": {
+                        "id": "whatsappText"
+                    }
+                }
+            ]
+           }
+        )
+    },
+    whatsappImage : ()=>{
+        return CardFactory.adaptiveCard(
+            {
+                "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+                "type": "AdaptiveCard",
+                "version": "1.3",
+                "body": [
+                    {
+                        "type": "Input.Text",
+                        "label": "Enter Recepient Number",
+                        "style": "text",
+                        "id": "recepientNumber",
+                        "isRequired": true,
+                        "errorMessage": "Number is required",
+                        "placeholder": "919568985656",
+                        "isVisible": true,
+                        "spacing": "Small"
+                    },
+                    {
+                        "type": "Input.Text",
+                        "label": "Enter Image Url",
+                        "id": "imageUrl"
+                    },
+                    {
+                        "type": "Input.Text",
+                        "label": "Enter Caption",
+                        "id": "imageCaption"
+                    }
+                ],
+                "actions": [
+                    {
+                        "type": "Action.Submit",
+                        "title": "Send",
+                        "data": {
+                            "id": "whatsappImage"
+                        }
+                    }
+                ]
+            }
+        )
     }
 }

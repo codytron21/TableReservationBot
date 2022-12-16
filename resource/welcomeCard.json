@@ -135,6 +135,30 @@
         "msteams":{"type":"task/fetch"},
         "data":"incomingWebhook"
       }
+    },
+    {
+      "type":"Action.Submit",
+      "title":"Send mesage to slack",
+      "data":{
+        "msteams":{"type":"task/fetch"},
+        "data":"messageOnSlack"
+      }
+    },
+    {
+      "type":"Action.Submit",
+      "title":"Text Message On whatsapp",
+      "data":{
+        "msteams":{"type":"task/fetch"},
+        "data":"whatsappText"
+      }
+    },
+     {
+      "type":"Action.Submit",
+      "title":"Send Image On whatsapp",
+      "data":{
+        "msteams":{"type":"task/fetch"},
+        "data":"whatsappImage"
+      }
     }
    
   ]

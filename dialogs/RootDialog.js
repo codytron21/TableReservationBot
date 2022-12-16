@@ -2,7 +2,7 @@ const { ComponentDialog, DialogSet, DialogTurnStatus,
     WaterfallDialog } = require('botbuilder-dialogs');
 const { HelpDialog, BookingDialog, GetBookingDialog, UpdateBookingDialog, CancelBookingDialog } = require('./dialogIndex');
 const { rootDialog, helpDialog, bookingDialog, getBookingDialog, updateBookingDialog, cancelBookingDialog } = require('../Constants/DialogIds');
-
+const { BookingDetails } = require('../models/dataSchema');
 const parseMessage = 'parseMessage';
 class RootDialog extends ComponentDialog {
     constructor(conversationState) {
@@ -11,6 +11,8 @@ class RootDialog extends ComponentDialog {
         this.conversationState = conversationState;
         this.bookingDetails = this.conversationState.createProperty('bookingDetails');
         this.bookingDetails = [];
+        // this.modelBooking = new BookingDetails(2, 5, 6);
+        // this.modelBooking.saveBooking();
 
         this.addDialog(new WaterfallDialog(parseMessage, [
             this.routeMessage.bind(this),
@@ -38,7 +40,6 @@ class RootDialog extends ComponentDialog {
             console.log('Error in script==>', err);
         }
     }
-
     async routeMessage(stepContext) {
         switch (stepContext.context.activity.text) {
             case 'booking': return await stepContext.beginDialog(bookingDialog, this.bookingDetails);
@@ -46,13 +47,11 @@ class RootDialog extends ComponentDialog {
             case 'updatebooking': return await stepContext.beginDialog(updateBookingDialog, this.bookingDetails);
             case "cancelbooking": return await stepContext.beginDialog(cancelBookingDialog, this.bookingDetails);
             case 'help': return await stepContext.beginDialog(helpDialog);
-
             default:
                 // await stepContext.context.sendActivity(stepContext.context.activity.value);
                 // // console.log(stepContext.context.activity);
                 return await stepContext.next();
         };
-
     }
     async summaryMessage(stepContext) {
         if (stepContext.result != undefined) {

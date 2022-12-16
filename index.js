@@ -3,23 +3,44 @@ const path = require('path');
 const ENV_FILE = path.join(__dirname, '.env');
 require('dotenv').config({ path: ENV_FILE });
 
-const { ConversationState, MemoryStorage, BotFrameworkAdapter,
-
+const { ConversationState,
+    //  UserState,
+    MemoryStorage, BotFrameworkAdapter,
     CloudAdapter,
     ConfigurationBotFrameworkAuthentication
 } = require('botbuilder');
+// const { CosmosDbPartitionedStorage } = require('botbuilder-azure');
+// const { storeInstance } = require('./services/singletonStore');
+// const config = require("./config/local_config.json");
 
 const { RootDialog } = require('./dialogs/RootDialog');
-const { BotActivityHandler } = require('./BotActivityHandler');
+const { bot } = require('./bot/bot');
+
+// const cosmosDBConfig = {
+//     cosmosDbEndpoint: config.cosmosDB.cosmosDbEndpoint,
+//     authKey: config.cosmosDB.authKey,
+//     databaseId: config.cosmosDB.databaseId,
+//     containerId: config.cosmosDB.containerId,
+//     compatibilityMode: config.cosmosDB.compatibilityMode === "false" ? false : true
+// }
+
+// const cosmosDbPartitionedStorage = new CosmosDbPartitionedStorage(cosmosDBConfig);
+// const conversationState = new ConversationState(cosmosDbPartitionedStorage);
+// const userState = new UserState(cosmosDbPartitionedStorage);
+
 const memoryStorage = new MemoryStorage();
 const conversationState = new ConversationState(memoryStorage);
 const conversationReferences = {};
 const rootDialog = new RootDialog(conversationState);
-const mainBot = new BotActivityHandler(conversationState, rootDialog, conversationReferences);
+const mainBot = new bot(conversationState, rootDialog, conversationReferences);
+
+
+
 // const adapter = new BotFrameworkAdapter({
 //     appId: process.env.MicrosoftAppId,
 //     appPassword: process.env.MicrosoftAppPassword
 // });
+
 const botFrameworkAuthentication = new ConfigurationBotFrameworkAuthentication(process.env);
 // Create adapter.
 // See https://aka.ms/about-bot-adapter to learn more about adapters.
@@ -48,7 +69,6 @@ adapter.onTurnError = async (context, error) => {
 const server = restify.createServer();
 server.use(restify.plugins.bodyParser());
 
-
 server.listen(process.env.PORT || 3978, () => {
     console.log(`${server.name} is running on ${server.url}`);
 });
@@ -59,7 +79,6 @@ server.post("/api/messages", async (req, res) => {
     );
 });
 
-
 server.get('/api/notify', async (req, res) => {
     for (const conversationReference of Object.values(conversationReferences)) {
         // console.log("======>", conversationReference);
@@ -67,7 +86,6 @@ server.get('/api/notify', async (req, res) => {
             await context.sendActivity('Proactive Message: Thanks for visiting our webpage!');
         });
     }
-
     res.setHeader('Content-Type', 'text/html');
     res.writeHead(200);
     res.write('<html><body><h1>Proactive messages have been sent.</h1></body></html>');
@@ -76,19 +94,6 @@ server.get('/api/notify', async (req, res) => {
 server.get('/*', restify.plugins.serveStatic({
     directory: './pages'
 }));
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
