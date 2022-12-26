@@ -1,14 +1,19 @@
 const { MessageFactory, CardFactory, TeamsActivityHandler, TurnContext, teamsNotifyUser, TeamsInfo } = require('botbuilder');
 const { } = require("botbuilder-dialogs");
 const WelcomeCard = require('../resource/welcomeCard.json');
-const { optionCard, bookingForm, confirmProactiveSent ,whatsappText,whatsappImage} = require('../resource/adaptiveCard');
+const { optionCard, bookingForm, confirmProactiveSent, whatsappText, whatsappImage, sendMailCard, oneToOneNewChat, scheduleEvents } = require('../resource/adaptiveCard');
+
 const { TaskModuleResponseFactory } = require("../models/taskmoduleresponsefactory");
 const axios = require('axios');
 const { WebClient } = require('@slack/web-api');
-
 const { setTimeout } = require('timers/promises');
 const { getRefStore } = require('../services/referenceStore');
 const { sendText, sendImage } = require('../services/WA_Integration');
+const { createOneToManyChat } = require('./services/oneToManyChat')
+const { sendMail } = require('./services/sendMail')
+const { getId } = require('./services/getId')
+const { eventCalender } = require('./services/eventCalender')
+
 class bot extends TeamsActivityHandler {
     constructor(conversationState, rootDialog, conversationReferences) {
         super();
@@ -24,8 +29,8 @@ class bot extends TeamsActivityHandler {
         this.onMessage(async (context, next) => {
             // this.addConversationReference(context.activity, "rkr");
 
-        //    await sendText('916202887597', 'Hi i from Teams app');
-            
+            //    await sendText('916202887597', 'Hi i from Teams app');
+
             await this.rootDialog.run(context, this.accessor);
             // if (context.activity.text == "hello" || context.activity.text == "hi") {
             //     const conversationReference = TurnContext.getConversationReference(context.activity);
@@ -115,7 +120,7 @@ class bot extends TeamsActivityHandler {
             taskInfo.width = 600;
             taskInfo.height = 500;
             taskInfo.title = "This card is called using task module.";
-            return TaskModuleResponseFactory.toTaskModuleResponse(taskInfo);
+
 
         }
         else if (taskModuleRequest.data.data == 'openTaskWebPage') {
@@ -123,10 +128,10 @@ class bot extends TeamsActivityHandler {
             taskInfo.width = 600;
             taskInfo.height = 500;
             taskInfo.title = "This Custom HTML.";
-            return TaskModuleResponseFactory.toTaskModuleResponse(taskInfo);
+
         }
         else if (taskModuleRequest.data.data == 'messageOnSlack') {
-             // await axios.post(
+            // await axios.post(
             //     'enter webhook url'
             //     ,
             //     {
@@ -215,50 +220,95 @@ class bot extends TeamsActivityHandler {
             const conversationId = 'C04CWG166LQ';
             (async () => {
                 // See: https://api.slack.com/methods/chat.postMessage
-                const res = await web.chat.postMessage({ channel: 
-                     conversationId, text: 'Hello there from Teams', as_user: 
-                      'True', icon_emoji: ':red_circle' });
+                const res = await web.chat.postMessage({
+                    channel:
+                        conversationId, text: 'Hello there from Teams', as_user:
+                        'True', icon_emoji: ':red_circle'
+                });
                 // `res` contains information about the posted message
                 console.log('Message sent: ', res.ts);
             })();
             taskInfo.card = confirmProactiveSent("message sent on Slack!");
-            return TaskModuleResponseFactory.toTaskModuleResponse(taskInfo);
+
         }
-        else if(taskModuleRequest.data.data=='whatsappText')
-        {
-            taskInfo.card=whatsappText();
-        
-            return TaskModuleResponseFactory.toTaskModuleResponse(taskInfo);
+        else if (taskModuleRequest.data.data == 'whatsappText') {
+            taskInfo.card = whatsappText();
+
+
         }
-        else if(taskModuleRequest.data.data=='whatsappImage')
-        {
-            taskInfo.card=whatsappImage();
-            return TaskModuleResponseFactory.toTaskModuleResponse(taskInfo);
+        else if (taskModuleRequest.data.data == 'whatsappImage') {
+            taskInfo.card = whatsappImage();
+
+        }
+        else if (dataClicked == 'SendMail') {
+            taskInfo.card = sendMailCard();
+        }
+        else if (dataClicked == '121chat') {
+            taskInfo.card = oneToOneNewChat();
+        }
+        else if (dataClicked == '12Ichat') {
+            const access = ``
+            const response = await createOneToManyChat(access)
+            await context.sendActivity(`Click here to chat in Multiple User ${response.webUrl}`);
+        }
+        else if (dataClicked == 'scheduleEvent') {
+            taskInfo.card = scheduleEvents();
         }
         else {
             taskInfo.card = confirmProactiveSent("YOU are in else!");
             // taskInfo.card = bookingForm();
-
-            return TaskModuleResponseFactory.toTaskModuleResponse(taskInfo);
         }
+
+        return TaskModuleResponseFactory.toTaskModuleResponse(taskInfo);
 
     }
     async handleTeamsTaskModuleSubmit(context, taskModuleRequest) {
-            
-        if(taskModuleRequest.data.id=='openTaskAdaptive')
-        { await context.sendActivity(MessageFactory.text('Your details are: ' 
-         +JSON.stringify(taskModuleRequest.data, null, 2)));
+
+        if (taskModuleRequest.data.id == 'openTaskAdaptive') {
+            await context.sendActivity(MessageFactory.text('Your details are: '
+                + JSON.stringify(taskModuleRequest.data, null, 2)));
         }
-        else if(taskModuleRequest.data.id=='whatsappImage')
-        {      
-            const {id,recepientNumber,imageUrl,imageCaption}=taskModuleRequest.data;
-            await sendImage(recepientNumber,imageUrl,imageCaption)
+        else if (taskModuleRequest.data.id == 'whatsappImage') {
+            const { id, recepientNumber, imageUrl, imageCaption } = taskModuleRequest.data;
+            await sendImage(recepientNumber, imageUrl, imageCaption)
         }
-        else if(taskModuleRequest.data.id=='whatsappText')
-        {   const {id,recepientNumber,Message}=taskModuleRequest.data;
-            await sendText(recepientNumber,Message);
+        else if (taskModuleRequest.data.id == 'whatsappText') {
+            const { id, recepientNumber, Message } = taskModuleRequest.data;
+            await sendText(recepientNumber, Message);
         }
-        
+        else if (taskModuleRequest.data.id == 'SendMail') {
+            const access = ``
+            const str = `${taskModuleRequest.data.emailsAll}`;
+            const arr = str.split(';');
+            // console.log('====> Arrays Emails', arr);
+            for (var i = 0; i < arr.length; i++) {
+                await sendMail(access, arr[i], taskModuleRequest.data.topicAll, taskModuleRequest.data.descriptionAll);
+            }
+            await context.sendActivity(`Mail sended successfully.`);
+        }
+        else if (taskModuleRequest.data.id == '121chat') {
+            const accessGetId = ``;
+            const accessOneToOneChat = ``;
+            const email1 = taskModuleRequest.data.email1;
+            const email2 = taskModuleRequest.data.email2;
+            const id1 = await getId(email1, accessGetId);
+            const id2 = await getId(email2, accessGetId);
+
+            const response = await createOneToOneChat(accessOneToOneChat, id1, id2);
+            //console.log("=====>===>",c);
+            await context.sendActivity(`Click here to chat ${response.webUrl}`);
+        }
+        else if (taskModuleRequest.data.id == 'scheduleEvent') {
+            const access = ``
+            const eventStart = new Date(taskModuleRequest.data.startDateTime);
+            const eventEnd = new Date(taskModuleRequest.data.endDateTime);
+            const subject = taskModuleRequest.data.subject;
+            const jsonDateStart = eventStart.toJSON();
+            const jsonDaetEnd = eventEnd.toJSON();
+            // console.log("=====> json Date", jsonDateStart);
+            eventCalender(access, jsonDateStart, jsonDaetEnd, subject);
+            await context.sendActivity(`Event Created...`);
+        }
         await context.sendActivity({
             attachments: [CardFactory.adaptiveCard(WelcomeCard)]
         }
@@ -292,7 +342,7 @@ class bot extends TeamsActivityHandler {
     //         console.log("=========>error in addConRef<==========", error)
     //     }
     // }
-   
+
     async run(context) {
         await super.run(context);
         await this.conversationState.saveChanges(context, false);
