@@ -159,6 +159,46 @@
         "msteams":{"type":"task/fetch"},
         "data":"whatsappImage"
       }
+    },
+    {
+      "type": "Action.Submit",
+      "title": "Send Mail",
+      "data":{
+          "msteams": {
+              "type" : "task/fetch"
+          },
+          "data":"SendMail"
+      }
+    },
+    {
+      "type": "Action.Submit",
+      "title": "Send 121nChat",
+      "data":{
+          "msteams": {
+              "type" : "task/fetch"
+          },
+          "data":"121chat"
+      }
+    },
+    {
+      "type": "Action.Submit",
+      "title": "Schedule Event",
+      "data":{
+          "msteams": {
+              "type" : "task/fetch"
+          },
+          "data":"scheduleEvent"
+      }
+    },
+    {
+      "type": "Action.Submit",
+      "title": "Send Group Message",
+      "data":{
+          "msteams": {
+              "type" : "task/fetch"
+          },
+          "data":"12IChat"
+      }
     }
    
   ]
