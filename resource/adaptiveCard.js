@@ -73,8 +73,8 @@ module.exports = {
                             "items": [
                                 {
                                     "type": "Image",
-                                     "url": 
-                                    `https://encryptedtbn0.gstatic.com/images? 
+                                    "url":
+                                        `https://encryptedtbn0.gstatic.com/images? 
                                        q=tbn:ANd9GcRSC41cOW3uPnzNpCqG0JokoF- 
                                         yHb3P52-cpQ&usqp=CAU`,
                                     "size": "Large"
@@ -132,8 +132,8 @@ module.exports = {
                     "id": "bookingDate",
                     "separator": true
                 }
-             ],
-             "actions": [
+            ],
+            "actions": [
                 {
                     "type": "Action.Submit",
                     "title": "Book Table",
@@ -226,7 +226,7 @@ module.exports = {
             ]
         });
     },
-   confirmProactiveSent: (text) => {
+    confirmProactiveSent: (text) => {
         return CardFactory.adaptiveCard({
             version: '1.0.0',
             type: 'AdaptiveCard',
@@ -248,42 +248,42 @@ module.exports = {
 
         });
     },
-    whatsappText : ()=>{
+    whatsappText: () => {
         return CardFactory.adaptiveCard(
             {
-            "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
-            "type": "AdaptiveCard",
-            "version": "1.0",
-            "body": [
-                {
-                    "type": "Input.Text",
-                    "label": "Enter Recepient Number",
-                    "style": "text",
-                    "id": "recepientNumber",
-                    "isRequired": true,
-                    "errorMessage": "Number is required"
-                },
-                {
-                    "type": "Input.Text",
-                    "label": "Your Message",
-                    "style": "text",
-                    "isMultiline": true,
-                    "id": "Message"
-                }
-            ],
-            "actions": [
-                {
-                    "type": "Action.Submit",
-                    "title": "Send",
-                    "data": {
-                        "id": "whatsappText"
+                "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+                "type": "AdaptiveCard",
+                "version": "1.0",
+                "body": [
+                    {
+                        "type": "Input.Text",
+                        "label": "Enter Recepient Number",
+                        "style": "text",
+                        "id": "recepientNumber",
+                        "isRequired": true,
+                        "errorMessage": "Number is required"
+                    },
+                    {
+                        "type": "Input.Text",
+                        "label": "Your Message",
+                        "style": "text",
+                        "isMultiline": true,
+                        "id": "Message"
                     }
-                }
-            ]
-           }
+                ],
+                "actions": [
+                    {
+                        "type": "Action.Submit",
+                        "title": "Send",
+                        "data": {
+                            "id": "whatsappText"
+                        }
+                    }
+                ]
+            }
         )
     },
-    whatsappImage : ()=>{
+    whatsappImage: () => {
         return CardFactory.adaptiveCard(
             {
                 "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
@@ -323,5 +323,182 @@ module.exports = {
                 ]
             }
         )
+    },
+    sendMailCard: () => {
+        return CardFactory.adaptiveCard({
+            "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+            "type": "AdaptiveCard",
+            "version": "1.0",
+            "body": [
+                {
+                    "type": "TextBlock",
+                    "size": "Medium",
+                    "weight": "Bolder",
+                    "text": "Send Mail to Multiple User",
+                    "horizontalAlignment": "Center",
+                    "wrap": true,
+                    "style": "heading"
+                },
+                {
+                    "type": "TextBlock",
+                    "text": "Emails",
+                    "wrap": true
+                },
+                {
+                    "type": "Input.Text",
+                    "style": "text",
+                    "id": "emailsAll",
+                    "placeholder": "Enter comma separated emails",
+                    "isRequired": true
+                },
+                {
+                    "type": "TextBlock",
+                    "text": "Topic",
+                    "wrap": true
+                },
+                {
+                    "type": "Input.Text",
+                    "id": "topicAll",
+                    "placeholder": "Meet for lunch?",
+                    "style": "text",
+                    "isRequired": true
+                },
+                {
+                    "type": "TextBlock",
+                    "text": "Description",
+                    "wrap": true
+                },
+                {
+                    "type": "Input.Text",
+                    "id": "descriptionAll",
+                    "placeholder": "The new cafeteria is open.",
+                    "style": "text",
+                    "isRequired": true
+                }
+            ],
+            "actions": [
+                {
+                    "type": "Action.Submit",
+                    "title": "Send",
+                    "data": {
+                        "id": "SendMail"
+                    }
+                }
+            ]
+        })
+    },
+    oneToOneNewChat: () => {
+        return CardFactory.adaptiveCard({
+            "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+            "type": "AdaptiveCard",
+            "version": "1.5",
+            "body": [
+                {
+                    "type": "TextBlock",
+                    "size": "Medium",
+                    "weight": "Bolder",
+                    "text": " One To One Chat",
+                    "horizontalAlignment": "Center",
+                    "wrap": true,
+                    "style": "heading"
+                },
+                {
+                    "type": "TextBlock",
+                    "text": "Email 1",
+                    "wrap": true
+                },
+                {
+                    "type": "Input.Text",
+                    "style": "text",
+                    "id": "email1",
+                    "placeholder": "user1@celebaltech.com",
+                    "isRequired": true
+                },
+                {
+                    "type": "TextBlock",
+                    "text": "Email 2",
+                    "wrap": true
+                },
+                {
+                    "type": "Input.Text",
+                    "style": "text",
+                    "id": "email2",
+                    "placeholder": "user2@celebaltech.com",
+                    "isRequired": true
+                }
+            ],
+            "actions": [
+                {
+                    "type": "Action.Submit",
+                    "title": "Create Chat",
+                    "data": {
+                        "id": "121chat"
+                    }
+                }
+            ]
+        })
+    },
+    scheduleEvents: () => {
+        return CardFactory.adaptiveCard({
+            "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+            "type": "AdaptiveCard",
+            "version": "1.0",
+            "body": [
+                {
+                    "type": "TextBlock",
+                    "size": "Medium",
+                    "weight": "Bolder",
+                    "text": "Event Scheduler",
+                    "horizontalAlignment": "Center",
+                    "wrap": true,
+                    "style": "heading"
+                },
+                {
+                    "type": "TextBlock",
+                    "text": "Start Date Time",
+                    "wrap": true
+                },
+                {
+                    "type": "Input.Text",
+                    "style": "text",
+                    "id": "startDateTime",
+                    "isRequired": true,
+                    "placeholder": "August 19, 1975 23:15:30 UTC"
+                },
+                {
+                    "type": "TextBlock",
+                    "text": "End Date Time",
+                    "wrap": true
+                },
+                {
+                    "type": "Input.Text",
+                    "id": "endDateTime",
+                    "style": "text",
+                    "isRequired": true,
+                    "placeholder": "August 19, 1975 23:15:30 UTC"
+                },
+                {
+                    "type": "TextBlock",
+                    "text": "Subject",
+                    "wrap": true
+                },
+                {
+                    "type": "Input.Text",
+                    "id": "subject",
+                    "style": "text",
+                    "isRequired": true,
+                    "placeholder": "Testing Meeting"
+                }
+            ],
+            "actions": [
+                {
+                    "type": "Action.Submit",
+                    "title": "Schedule Event",
+                    "data": {
+                        "id": "scheduleEvent"
+                    }
+                }
+            ]
+        })
     }
 }
